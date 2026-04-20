@@ -1,0 +1,61 @@
+# EcoSnap — Cursor project rules (non-AI MVP)
+
+## Goals
+- Ship a modular, student-maintainable monorepo for EcoSnap (Expo + Supabase + optional Next.js admin).
+- Keep recycling *rules evaluation* separate from *item identification* (manual search today; AI later).
+- Do not introduce AI/ML/image recognition until the project owner explicitly requests it in chat.
+
+## Required directory layout (do not flatten)
+- `apps/mobile/` — Expo (React Native) app only: UI, navigation, feature modules, app-specific hooks.
+- `apps/admin/` — Admin dashboard web app only.
+- `packages/shared/` — Shared Zod schemas, TypeScript types, DTOs used by both clients; no UI.
+- `packages/rules-engine/` — Pure TypeScript: deterministic rule evaluation only; no network/IO imports.
+- `supabase/migrations/` — SQL migrations; no ad-hoc manual DB edits without a migration.
+- `supabase/seed/` — Seed data/scripts for local dev.
+- `docs/` — Architecture + runbooks (keep concise).
+
+New code must live in the closest appropriate folder. Do not add parallel top-level apps without updating this rule.
+
+## Dependency rules
+- `packages/rules-engine` MUST NOT import from `apps/*`.
+- `apps/*` MAY import from `packages/*`.
+- `packages/shared` MUST NOT import from `apps/*`.
+
+## Search & aliases
+- Canonical display strings live on `item` (`title`, `slug`). User-facing search MUST include `item_search_alias` rows (normalized consistently).
+- Any change to ranking or normalization MUST update both the Supabase RPC (if used) and bundled snapshot export logic together; keep ranking deterministic (document tie-breakers in `docs/search-spec.md` once created).
+
+## Conditional questions (disambiguation flows)
+- Flow definitions MUST validate against the shared Zod schema in `packages/shared` before save/publish.
+- Flow logic MUST remain data-driven (JSON graph); do not encode per-item branching inside random React screens without also updating the shared schema/tests.
+- The rules engine consumes only merged **attributes** after the flow; do not duplicate jurisdiction rule logic inside flow JSON.
+
+## Publishing
+- Never expose draft content to the mobile anon role (RLS + `status=published`).
+- Publishing MUST run the publish validation checklist server-side (blocking errors cannot be bypassed from the browser console).
+
+## AI/ML prohibition (hard gate)
+Until the project owner explicitly asks to add AI/ML, you MUST NOT:
+- Add dependencies related to machine learning, inference, embeddings, training, or computer vision (examples: `tensorflow*`, `torch`, `onnx*`, `@tensorflow/*`, `tflite`, `opencv*`, `mediapipe*`, `react-native-vision-camera` when used for ML pipelines, cloud vendor "Vision/Detect/Analyze image" SDKs).
+- Add image classification, object detection, segmentation, OCR-for-automation beyond normal UI text rendering, or model hosting/inference endpoints.
+
+Allowed without being "AI":
+- Standard image picker / camera UI **only** for non-ML UX (profile photo, attachments metadata) if explicitly requested.
+- Heuristic string matching/search (SQL `ilike`, client-side fuzzy search) is allowed.
+
+When AI is later approved, implement it as a new package (e.g., `packages/ai-identification/`) and integrate via existing `classification_*` tables and/or explicit service boundaries — do not embed vendor SDKs inside `rules-engine`.
+
+## Engineering standards
+- TypeScript everywhere for app and package code.
+- Validate external inputs with Zod (especially admin mutations, **item flows JSON**, and publish payloads).
+- Prefer Supabase RLS for authorization; never ship service-role keys to mobile.
+- Keep recycling citations/links as data (`source_document`) rather than hardcoding city logic in UI components.
+- **Search:** use shared `normalizeSearchQuery()` for parity between admin previews and mobile/RPC.
+- **Trust:** any user-facing guidance pulled from `rule`/`item` must surface **primary source + last reviewed** in the UI model (even if collapsed behind a "Sources" sheet).
+
+## Review checklist (agents must self-check before finishing)
+- Does this change respect folder boundaries?
+- Does it avoid forbidden AI/ML dependencies?
+- If adding DB fields for identification, are they compatible with future `classification_signal` rows rather than overloading `item`?
+- If touching publish: are **validation rules** updated + reflected in admin checklist copy?
+- If touching search: are **aliases + ranking** documented and kept deterministic?
