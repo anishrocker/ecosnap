@@ -18,7 +18,11 @@ psql "$DATABASE_URL" -f supabase/seed/seed.sql
 ```
 
 5. In the Supabase dashboard, enable **Auth → Email** (magic link) for admin users.
-6. After a user signs up, set `profiles.role` to `admin` or `editor` in SQL if needed.
+6. **Auth redirect URLs (required for admin magic link):** In **Authentication → URL Configuration → Redirect URLs**, add:
+   - `http://localhost:3000/auth/callback` (local Next.js admin)
+   - Your production admin URL with the same path, e.g. `https://your-domain.com/auth/callback`  
+   Without this, the link in the email may not complete sign-in (loop back to login).
+7. After a user signs up, set `profiles.role` to `admin` or `editor` in SQL if needed.
 
 ## Admin (Vercel)
 
