@@ -28,7 +28,7 @@ psql "$DATABASE_URL" -f supabase/seed/seed.sql
 
 1. Connect the GitHub repo to Vercel.
 2. Set root directory to `apps/admin` **or** use monorepo settings with install `pnpm install` and build `pnpm exec turbo run build --filter=@ecosnap/admin`.
-3. Add environment variables from `.env.example`.
+3. Add environment variables from `.env.example` (use `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` / `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` when your Supabase project provides publishable keys; legacy `*_ANON_KEY` still works as fallback).
 
 ## Mobile (EAS)
 

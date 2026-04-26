@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
+import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/env";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,9 +17,13 @@ export default function LoginPage() {
 
   async function sendLink() {
     setMsg(null);
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const supabase = createBrowserClient(url, anon);
+    const url = getSupabaseUrl();
+    const key = getSupabasePublishableKey();
+    if (!url || !key) {
+      setMsg("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.local");
+      return;
+    }
+    const supabase = createBrowserClient(url, key);
     const origin = window.location.origin;
     const { error } = await supabase.auth.signInWithOtp({
       email,
