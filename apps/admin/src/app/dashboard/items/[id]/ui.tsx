@@ -131,74 +131,101 @@ export function ItemEditor({ item, aliases, flow, rules, jurisdictions }: Props)
   }
 
   return (
-    <div style={{ maxWidth: 900 }}>
-      <h1>Edit item</h1>
-      <div style={{ display: "grid", gap: 12, marginTop: 16 }}>
-        <label>
-          Title
-          <input value={title} onChange={(e) => setTitle(e.target.value)} style={{ display: "block", width: "100%", padding: 8 }} />
-        </label>
-        <label>
-          Slug
-          <input value={slug} onChange={(e) => setSlug(e.target.value)} style={{ display: "block", width: "100%", padding: 8 }} />
-        </label>
-        <label>
-          Status
-          <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ display: "block", marginTop: 4 }}>
-            <option value="draft">draft</option>
-            <option value="published">published</option>
-          </select>
-        </label>
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="checkbox" checked={notCovered} onChange={(e) => setNotCovered(e.target.checked)} />
-          not_covered (explicit gap OK)
-        </label>
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="checkbox" checked={comingSoon} onChange={(e) => setComingSoon(e.target.checked)} />
-          coming_soon
-        </label>
-        <label>
-          Coverage notes
-          <textarea value={coverageNotes} onChange={(e) => setCoverageNotes(e.target.value)} rows={3} style={{ width: "100%" }} />
-        </label>
-        <label>
-          Citation URL (item-level)
-          <input value={citationUrl} onChange={(e) => setCitationUrl(e.target.value)} style={{ display: "block", width: "100%", padding: 8 }} />
-        </label>
-        <label>
-          Last reviewed (date)
-          <input type="date" value={lastReviewed} onChange={(e) => setLastReviewed(e.target.value)} style={{ display: "block", marginTop: 4 }} />
-        </label>
-        <label>
-          Aliases (one per line; normalized with{" "}
-          <code>normalizeSearchQuery</code> on save in production)
-          <textarea value={aliasLines} onChange={(e) => setAliasLines(e.target.value)} rows={5} style={{ width: "100%", fontFamily: "monospace" }} />
-        </label>
-        <label>
-          Item flow JSON (optional)
-          <textarea value={flowJson} onChange={(e) => setFlowJson(e.target.value)} rows={12} style={{ width: "100%", fontFamily: "monospace" }} />
-        </label>
-      </div>
+    <div style={{ maxWidth: 960, display: "grid", gap: 18 }}>
+      <section className="admin-card" style={{ padding: 20 }}>
+        <h1 style={{ margin: 0, fontSize: 30 }}>Edit item</h1>
+        <p style={{ margin: "8px 0 0", color: "var(--text-muted)" }}>
+          Update trust metadata, aliases, and optional disambiguation flow.
+        </p>
+      </section>
 
-      <div style={{ marginTop: 24, padding: 16, background: "#fff", border: "1px solid #ddd", borderRadius: 8 }}>
-        <h2>Publish checklist (client preview)</h2>
-        <p style={{ color: "#555", fontSize: 14 }}>
+      <section className="admin-card" style={{ padding: 20 }}>
+        <div style={{ display: "grid", gap: 14 }}>
+          <label>
+            <strong>Title</strong>
+            <input className="admin-input" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </label>
+          <label>
+            <strong>Slug</strong>
+            <input className="admin-input" value={slug} onChange={(e) => setSlug(e.target.value)} />
+          </label>
+          <label>
+            <strong>Status</strong>
+            <select className="admin-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="draft">draft</option>
+              <option value="published">published</option>
+            </select>
+          </label>
+          <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <input type="checkbox" checked={notCovered} onChange={(e) => setNotCovered(e.target.checked)} />
+            not_covered (explicit gap OK)
+          </label>
+          <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <input type="checkbox" checked={comingSoon} onChange={(e) => setComingSoon(e.target.checked)} />
+            coming_soon
+          </label>
+          <label>
+            <strong>Coverage notes</strong>
+            <textarea
+              className="admin-textarea"
+              value={coverageNotes}
+              onChange={(e) => setCoverageNotes(e.target.value)}
+              rows={3}
+            />
+          </label>
+          <label>
+            <strong>Citation URL (item-level)</strong>
+            <input className="admin-input" value={citationUrl} onChange={(e) => setCitationUrl(e.target.value)} />
+          </label>
+          <label>
+            <strong>Last reviewed (date)</strong>
+            <input className="admin-input" type="date" value={lastReviewed} onChange={(e) => setLastReviewed(e.target.value)} />
+          </label>
+          <label>
+            <strong>Aliases</strong> (one per line; normalized with <code>normalizeSearchQuery</code> on save in production)
+            <textarea
+              className="admin-textarea"
+              value={aliasLines}
+              onChange={(e) => setAliasLines(e.target.value)}
+              rows={5}
+              style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
+            />
+          </label>
+          <label>
+            <strong>Item flow JSON</strong> (optional)
+            <textarea
+              className="admin-textarea"
+              value={flowJson}
+              onChange={(e) => setFlowJson(e.target.value)}
+              rows={12}
+              style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
+            />
+          </label>
+        </div>
+      </section>
+
+      <section className="admin-card" style={{ padding: 20 }}>
+        <h2 style={{ marginTop: 0 }}>Publish checklist (client preview)</h2>
+        <p style={{ color: "var(--text-muted)", fontSize: 14 }}>
           Server-side enforcement: call <code>/api/publish-item</code> with the service role after saves. This panel mirrors validation rules.
         </p>
-        <button type="button" onClick={runPublishCheck} style={{ marginTop: 8, padding: "8px 14px" }}>
+        <button type="button" onClick={runPublishCheck} className="admin-button" style={{ marginTop: 8 }}>
           Run validation
         </button>
-        <ul>
+        <ul style={{ marginBottom: 0, marginTop: 14, paddingLeft: 18 }}>
           {checklist.map((c, i) => (
-            <li key={i} style={{ color: c.level === "error" ? "#a00" : "#a60" }}>
-              [{c.level}] {c.message}
+            <li key={i} style={{ marginBottom: 8, color: "var(--text)" }}>
+              <span className={`badge ${c.level === "error" ? "badge-error" : "badge-warning"}`}>{c.level}</span>{" "}
+              {c.message}
             </li>
           ))}
         </ul>
-        {checklist.length === 0 ? <p style={{ color: "#666" }}>Run validation to see blocking vs warning items.</p> : null}
-      </div>
+        {checklist.length === 0 ? (
+          <p style={{ color: "var(--text-muted)", marginBottom: 0 }}>Run validation to see blocking vs warning items.</p>
+        ) : null}
+      </section>
 
-      <p style={{ marginTop: 16, fontSize: 13, color: "#666" }}>
+      <p style={{ marginTop: 2, fontSize: 13, color: "var(--text-muted)" }}>
         Normalization helper: <code>{normalizeSearchQuery("  Plastic #1  ")}</code>
       </p>
     </div>

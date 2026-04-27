@@ -1,19 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/env";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
-  const [urlError, setUrlError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const err = params.get("error");
-    setUrlError(err ? decodeURIComponent(err) : null);
-  }, []);
+  const [urlError] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const err = new URLSearchParams(window.location.search).get("error");
+    return err ? decodeURIComponent(err) : null;
+  });
 
   async function sendLink() {
     setMsg(null);

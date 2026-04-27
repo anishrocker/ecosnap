@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import type { CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/env";
@@ -7,6 +8,12 @@ import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/env";
  * Completes the magic-link / OAuth PKCE flow: exchanges `?code=` for a session and sets auth cookies.
  */
 export async function GET(request: Request) {
+  type CookieToSet = {
+    name: string;
+    value: string;
+    options?: CookieOptions;
+  };
+
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
@@ -25,7 +32,7 @@ export async function GET(request: Request) {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: CookieToSet[]) {
           try {
             cookiesToSet.forEach(({ name, value, options }) => {
               cookieStore.set(name, value, options);
