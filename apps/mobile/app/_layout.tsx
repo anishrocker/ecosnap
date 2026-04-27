@@ -8,6 +8,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerTitleAlign: "center" }}>
         <Stack.Screen name="index" options={{ title: "EcoSnap" }} />
         <Stack.Screen name="search" options={{ title: "Search" }} />
+        <Stack.Screen name="map" options={{ title: "Drop-off Map" }} />
         <Stack.Screen name="item/[id]" options={{ title: "Item" }} />
         <Stack.Screen name="flow/[itemId]" options={{ title: "Questions" }} />
         <Stack.Screen name="settings" options={{ title: "Settings" }} />

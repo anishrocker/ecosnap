@@ -139,6 +139,14 @@ export default function HomeScreen() {
         <Text style={styles.scanArrow}>→</Text>
       </Pressable>
 
+      <Pressable style={styles.mapCard} onPress={() => router.push("/map")}>
+        <View>
+          <Text style={styles.mapCardTitle}>Find drop-off locations</Text>
+          <Text style={styles.mapCardSub}>See nearby recycling, compost, hazardous, and electronics sites</Text>
+        </View>
+        <Text style={styles.mapCardArrow}>📍</Text>
+      </Pressable>
+
       <Text style={styles.sectionTitle}>Browse by Category</Text>
       <View style={styles.categoryGrid}>
         {categories.map((c) => (
@@ -217,6 +225,21 @@ const styles = StyleSheet.create({
   scanTitle: { fontSize: 24, fontWeight: "700", color: "#1a3a2f" },
   scanSub: { color: "#55756a", marginTop: 4, fontSize: 14 },
   scanArrow: { fontSize: 24, color: "#1a8b64", fontWeight: "700" },
+  mapCard: {
+    marginTop: 4,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#dbe7e1",
+    backgroundColor: "#fff",
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  mapCardTitle: { fontSize: 20, fontWeight: "700", color: "#17352a" },
+  mapCardSub: { color: "#5f776d", marginTop: 4, fontSize: 14, maxWidth: 260 },
+  mapCardArrow: { fontSize: 22 },
   sectionTitle: { marginTop: 10, fontWeight: "700", fontSize: 30, color: "#1a2f27" },
   categoryGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 4 },
   categoryCard: {
